@@ -1,0 +1,45 @@
+name: NEXUS 
+
+networks:
+   app_net:
+     name: app_net
+     external: true
+   web_net:
+     name: web_net
+     external: true 
+
+services:
+ nexus:
+     image: sonatype/nexus3:${NEXUS_VERSION}
+     container_name: nexus
+     restart: always
+     volumes:
+       - ./nexus-data:/nexus-data:rw
+       - /applog/nexus:/nexus-data/log:rw
+         # ports:
+       #   - "8081:8081"
+     healthcheck:
+       test: ["CMD", "curl", "-f", "--insecure", "http://localhost:8081"]
+       interval: 30s
+       timeout: 10s
+       retries: 3
+       start_period: 1m
+     networks:
+       - app_net
+
+ reverse-proxy:
+     image: nginx:latest
+     container_name: proxy
+     restart: always
+     volumes:
+       - /etc/letsencrypt/:/etc/letsencrypt/
+       - ./proxy-conf/default.conf:/etc/nginx/conf.d/default.conf
+       - /applog/proxy:/var/log/nginx:rw
+     ports:
+       - "80:80"
+       - "443:443"
+     depends_on:
+       - nexus
+     networks:
+       - app_net
+
