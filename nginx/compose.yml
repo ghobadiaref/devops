@@ -1,0 +1,15 @@
+networks:
+  web_net:
+    name: web_net
+
+services:
+  nginx:
+    image: "nginx:latest"
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt/
+      - ./conf.d:/etc/nginx/conf.d
+    networks:
+      - web_net
