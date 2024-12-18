@@ -1,0 +1,33 @@
+name: filebeate
+services:
+  filebeat:
+    #image: ${REGISTRY_URL}/${REGISTRY_DIR}/filebeat:${ELK_VERSION}
+    image: hub.fanap.bogomips.ir/elk/filebeat:7.10.1
+    container_name: filebeat
+    hostname: "filebeat"
+    user: root
+    networks:
+      - app_net
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - filebeat_data:/usr/share/filebeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      - /var/log/:/var/log/:ro
+      - /var/log/audit/:/var/log/audit/:ro
+    environment:
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST}
+        #- KIBANA_HOST=${KIBANA_HOST}
+      - KIBANA_HOSTS=http://kibana:5601
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
+    command: ["--strict.perms=false"]
+networks:
+  app_net:
+    external: true
+    name: app_net
+
+volumes:
+  filebeat_data:
+    name: filebeat_data
+
