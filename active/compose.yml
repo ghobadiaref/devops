@@ -1,0 +1,82 @@
+name: active
+
+networks:
+  app-net:
+    name: app-net
+    external: true   
+    driver: bridge
+    
+services:
+  ActiveMq-1:
+    image: apache/activemq-artemis:latest-alpine 
+    container_name: activeNode-1
+    restart: always
+    user: root
+    depends_on:
+      - database-1
+    env_file:
+       .env 
+    volumes:
+      - "./artemis/data:/var/lib/artemis-instance"
+    ports:
+      - "61617:61616"
+      - "8162:8161"
+    networks:
+      - app-net
+    platform:
+      "linux/amd64"
+
+  ActiveMq-2:
+    image: apache/activemq-artemis:latest-alpine 
+    container_name: activeNode-2
+    restart: always
+    user: root
+    depends_on:
+      - database-2
+    env_file:
+       .env 
+    volumes:
+      - "./artemis/data-2:/var/lib/artemis-instance"
+    ports:
+      - "61618:61616"
+      - "8163:8161"
+    networks:
+      - app-net
+    platform:
+      "linux/amd64"
+
+  database-1:
+    image: postgres:15
+    container_name: postgress-1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=active
+      - POSTGRES_PASSWORD=12344321
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - './volumes/postgres-1:/var/lib/postgresql/data'
+    networks:
+      - app-net
+
+  database-2:
+    image: postgres:15
+    container_name: postgress-2
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=active
+      - POSTGRES_PASSWORD=12344321
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - './volumes/postgres-1:/var/lib/postgresql/data'
+    networks:
+      - app-net
