@@ -1,0 +1,20 @@
+name: 
+  nginx-server
+
+services:
+  nginx:
+      image: nginx:alpine
+      container_name: nginx
+      volumes:
+        - ./conf.d:/etc/nginx/conf.d
+        - ./certs:/etc/nginx/certs
+      ports:
+        - 82:81
+      networks:
+        - app_net
+networks:
+  app_net:
+    name: app_net
+
+
+
