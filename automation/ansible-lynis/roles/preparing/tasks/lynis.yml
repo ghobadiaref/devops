@@ -1,0 +1,28 @@
+---
+- name: Lynis | Debian | install support for APT thru HTTPS
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: Get Lynis Key 
+  get_url:
+    url: https://packages.cisofy.com/keys/cisofy-software-public.key
+    dest: /etc/apt/trusted.gpg.d/cisofy-software-public.gpg
+    mode: ugo+rw
+
+- name: Add lynis apt repository 
+  apt_repository:
+    repo: "deb [arch=amd64,arm64 signed-by=/etc/apt/trusted.gpg.d/cisofy-software-public.gpg] https://packages.cisofy.com/community/lynis/deb/ jammy main" 
+    state: present
+    filename: lynis.list
+    update_cache: yes
+    mode: 0644
+    validate_certs: no 
+
+- name: Lynis | Debian | install lynis package
+  apt:
+    name: lynis
+    state: present
+    update_cache: yes
+    allow-unauthenticated: yes 
+    autoremove: yes 
