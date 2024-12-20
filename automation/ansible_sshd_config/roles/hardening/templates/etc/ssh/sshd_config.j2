@@ -119,4 +119,11 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
+{% if 'ssh_config.AllowUsers' is defined %}
+AllowUsers {{ ssh_config.AllowUsers }}
+{% endif %}
+
+{% if 'ssh_config.AllowGroups' is defined %}
+AllowGroups {{ ssh_config.AllowGroups  }}
+{% endif %}
 

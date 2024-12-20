@@ -6,3 +6,9 @@ ssh_config:
   root_login: without-password
   MaxAuthTries: 3
   MaxSessions: 2
+  AllowTcpForwarding: no  
+  ClientAliveCountMax: 2
+  UseDNS: no
+  AllowUsers: {{ ansible_user }}
+  AllowGroups: {{ ansible_user }}
+
