@@ -1,4 +1,4 @@
-name: 
+name: gitlab-server 
 
 networks:
   app_net:
@@ -8,7 +8,7 @@ networks:
     name: web_net
     external: true 
 
-valumes: 
+volumes: 
   gitlab_log: 
     name: gitlab_log
   gitlab_data:
@@ -26,9 +26,9 @@ services:
     hostname: "${GITLAB_EXTERNAL_DOMAIN}"
     environment:
       GITLAB_OMNIBUS_CONFIG: | 
-        EXTERNAL_URL "${GITLAB_EXTERNAL_DOMAIN}"
+        external_url "https://${GITLAB_EXTERNAL_DOMAIN}"
     ports:
-      - 22:22
+#      - 22:22
       - 80:80
       - 443:443
     volumes:
