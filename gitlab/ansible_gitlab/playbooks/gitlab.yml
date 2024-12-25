@@ -1,0 +1,7 @@
+
+- name: install and configuration gitlab service 
+  hosts: arvan-server 
+  become: true 
+  gather_facts: true 
+  roles:
+    - gitlab_setup 
