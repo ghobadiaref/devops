@@ -1,0 +1,17 @@
+---
+- name: Creates directory
+  ansible.builtin.file:
+    path: "{{ service_path }}"
+    state: directory
+
+- name: copy compose file  
+  ansible.builtin.copy:
+    src: compose.yml
+    dest: "{{ service_path }}/compose.yml"
+
+- name: copy .env file and change variables
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ service_path }}/.env"
+
+

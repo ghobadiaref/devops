@@ -1,0 +1,41 @@
+name: 
+
+networks:
+  app_net:
+    name: app_net
+    external: true 
+  web_net:
+    name: web_net
+    external: true 
+
+valumes: 
+  gitlab_log: 
+    name: gitlab_log
+  gitlab_data:
+    name: gitlab_data
+  gitlab_backup: 
+    name: gitlab_backup
+  gitlab_config:
+    name: gitlab_config
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:${GITLAB_CE_VERSION}
+    restart: ${RESTART_POLICY}
+    container_name: gitlab
+    hostname: "${GITLAB_EXTERNAL_DOMAIN}"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: | 
+        EXTERNAL_URL "${GITLAB_EXTERNAL_DOMAIN}"
+    ports:
+      - 22:22
+      - 80:80
+      - 443:443
+    volumes:
+      - 'gitlab_config:/etc/gitlab'
+      - 'gitlab_log:/var/log/gitlab'
+      - 'gitlab_data:/var/opt/gitlab'
+    networks:
+      - app_net
+      - web_net
+    
