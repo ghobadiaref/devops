@@ -1,4 +1,12 @@
 ---
+- name: pip install  
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - PyYAML==6.0.1
+    - docker-compose
+
 - name: Creates directory
   ansible.builtin.file:
     path: "{{ service_path }}"
@@ -14,4 +22,11 @@
     src: .env.j2
     dest: "{{ service_path }}/.env"
 
+- name: Pull all images on compose file 
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ service_path }}/compose.yml"
+
+- name: Create And Start Service
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ service_path }}/compose.yml" 
 
