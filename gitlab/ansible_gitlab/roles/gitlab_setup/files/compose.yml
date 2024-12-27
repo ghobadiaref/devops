@@ -27,6 +27,21 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: | 
         external_url "https://${GITLAB_EXTERNAL_DOMAIN}"
+        nginx['enable'] = true
+        nginx['client_max_body_size'] = '250m'
+        nginx['redirect_http_to_https'] = false
+        nginx['gzip_enabled'] = true
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        # ban login failed 
+        gitlab_rails['rack_attack_git_basic_auth'] = {
+        'enabled' => false,
+        'ip_whitelist' => ["127.0.0.1"],
+        'maxretry' => 10,
+        'findtime' => 60,
+        'bantime' => 3600
+        }
+
     ports:
 #      - 22:22
       - 80:80
@@ -35,6 +50,7 @@ services:
       - 'gitlab_config:/etc/gitlab'
       - 'gitlab_log:/var/log/gitlab'
       - 'gitlab_data:/var/opt/gitlab'
+      - 'gitlab_backup:/var/opt/gitlab/backups'
     networks:
       - app_net
       - web_net
