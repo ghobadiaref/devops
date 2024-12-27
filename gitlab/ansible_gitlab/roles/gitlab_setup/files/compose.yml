@@ -41,6 +41,16 @@ services:
         'findtime' => 60,
         'bantime' => 3600
         }
+        # registry congifuration 
+        registry_external_url 'https://${REGISTRY_DOMAIN}'
+        gitlab_rails['registry_enabled'] = true
+        gitlab_rails['registry_host'] = "${REGISTRY_DOMAIN}"
+        registry['enable'] = true
+        registry['registry_http_addr'] = "localhost:5000"
+        registry['log_directory'] = "/var/log/gitlab/registry"
+        registry['env_directory'] = "/opt/gitlab/etc/registry/env"
+        registry_nginx['enable'] = true
+        registry_nginx['listen_port'] = 80
 
     ports:
 #      - 22:22
