@@ -1,0 +1,79 @@
+---
+- name: Creates directory
+  ansible.builtin.file:
+    path: "~/.config/pip" 
+    state: directory
+
+- name: copy compose file  
+  ansible.builtin.copy:
+    src: pip.conf
+    dest: "~/.config/pip/pip.conf"
+
+- name: Install pip3
+  ansible.builtin.package:
+    name: python3-pip
+    state: present
+
+- name: Install compatible requests version
+  ansible.builtin.pip:
+    name: requests==2.31.0
+    state: present
+
+- name: pip install  
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - PyYAML==5.3.1
+    - docker-compose
+    - python-gitlab
+#    - docker
+#    - PyYAML==5.3.1
+#    - docker-compose
+
+- name: Creates directory
+  ansible.builtin.file:
+    path: "{{ service_path }}"
+    state: directory
+
+- name: copy compose file  
+  ansible.builtin.copy:
+    src: compose.yml
+    dest: "{{ service_path }}/compose.yml"
+
+- name: copy .env file and change variables
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ service_path }}/.env"
+
+- name: Create a external network whit driver options 
+  docker_network:
+    name: "{{ item }}"
+    driver_options:
+      com.docker.network.bridge.name: "{{ item }}"
+  loop:
+    - web_net
+    - app_net
+
+- name: Pull all images on compose file 
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ service_path }}"
+# environment:
+#   http_proxy: 
+
+- name: Create And Start Service
+  community.docker.docker_compose_v2:
+    project_src: "{{ service_path }}" 
+
+- name: Create an instance-level runner
+  community.general.gitlab_runner:
+    api_url: "{{ gitlab_policy_url }}"
+    api_token: "{{ gitlab_access_token }}"
+    #registration_token: "{{ gitlab_access_token }}"
+    description: gitlab instance runner 
+    state: present
+    active: true
+    run_untagged: true 
+    locked: false
+  tags:
+    - register_runner 

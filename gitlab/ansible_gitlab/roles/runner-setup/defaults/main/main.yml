@@ -1,0 +1,6 @@
+---
+# defaults file for runner-setup
+runner_version: v17.6.0
+service_path: /opt/services/runner
+gitlab_policy_url: https://arvan.bogomips.ir
+

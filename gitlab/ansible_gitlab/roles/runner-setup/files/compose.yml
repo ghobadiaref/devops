@@ -1,0 +1,29 @@
+networks:
+  app_net:
+    name: app_net
+    external: true
+  web_net:
+    name: web_net
+    external: true
+
+volumes:
+  runner_data:
+    name: runner_data 
+
+service:
+  gitlab_runner:
+    image: gitlab/gitlab-runner:${{RUNNER_VERSION}}
+    restart: ${RESTART_POLICY}
+    container_name: gitlab-runner
+    hostname: gitlab-runner  
+    
+    volumes:
+      - 'runner_data:/etc/gitlab/runner'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+   
+    networks:
+      - app_net
+      - web_net 
+
+    extra_hosts: 
+      - "arvan.bogomips.ir:88.99.21.167"

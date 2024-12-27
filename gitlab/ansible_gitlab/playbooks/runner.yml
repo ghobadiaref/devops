@@ -1,0 +1,7 @@
+
+- name: install and configuration runner service 
+  hosts: arvan-server 
+  become: true 
+  gather_facts: true 
+  roles:
+    - runner_setup
