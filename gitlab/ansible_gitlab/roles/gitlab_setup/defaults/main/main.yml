@@ -2,3 +2,4 @@
 service_path: /opt/services/gitlab
 git_domain: git.fanap.bogomips.ir
 git_version: 17.7.0-ce.0
+git_root_pass: 
